@@ -14,7 +14,9 @@ The `Foobar` endpoint is not implemented, and returns a gRPC status with code Un
 
 ### Configuring HAProxy
 
-Building HAProxy is outside of the scope of this README. Consult HAProxy's [INSTALL] documentation for how to build it.
+Building HAProxy is outside of the scope of this README. Consult [HAProxy's INSTALL documentation] for how to build it.
+
+[HAProxy's INSTALL documentation]: https://git.haproxy.org/?p=haproxy.git;a=blob;f=INSTALL;hb=HEAD
 
 A base configuration that can be used for testing:
 
