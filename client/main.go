@@ -25,47 +25,7 @@ var (
 	content = flag.String("content", defaultContent, "Ping request content")
 )
 
-func main() {
-	// parse cli arguments
-	flag.Parse()
-
-	// set up gRPC basics
-	conn, err := grpc.Dial(*addr, grpc.WithTransportCredentials(insecure.NewCredentials()))
-	if err != nil {
-		log.Fatalf("failed to connect: %v", err)
-	}
-	defer conn.Close()
-	ctx, cancel := context.WithTimeout(context.Background(), time.Minute)
-	defer cancel()
-	client := pb.NewBaseClient(conn)
-
-	// open stream for ping
-	log.Print("starting ping")
-	ping_s, err := client.Ping(ctx)
-	if err != nil {
-		log.Fatalf("failed to create ping stream: %v", err)
-	}
-
-	// send ping request and then close our sending side
-	if err := ping_s.Send(&pb.PingRequest{Content: *content}); err != nil {
-		log.Fatalf("failed to send ping: %v", err)
-	}
-	time.Sleep(time.Second)
-	ping_s.CloseSend()
-
-	// await all ping responses
-	for {
-		r, err := ping_s.Recv()
-		if err == io.EOF {
-			break
-		}
-		if err != nil {
-			log.Fatalf("failed to recv ping: %v", err)
-		}
-
-		log.Printf("recv pong: %s", r.GetContent())
-	}
-
+func foobar(client pb.BaseClient, ctx context.Context) {
 	// open stream for foobar
 	log.Print("starting foobar")
 	foobar_s, err := client.Foobar(ctx)
@@ -111,4 +71,52 @@ func main() {
 
 		log.Print("recv foobar")
 	}
+}
+
+func ping(client pb.BaseClient, ctx context.Context) {
+	// open stream for ping
+	log.Print("starting ping")
+	ping_s, err := client.Ping(ctx)
+	if err != nil {
+		log.Fatalf("failed to create ping stream: %v", err)
+	}
+
+	// send ping request and then close our sending side
+	if err := ping_s.Send(&pb.PingRequest{Content: *content}); err != nil {
+		log.Fatalf("failed to send ping: %v", err)
+	}
+	time.Sleep(time.Second)
+	ping_s.CloseSend()
+
+	// await all ping responses
+	for {
+		r, err := ping_s.Recv()
+		if err == io.EOF {
+			break
+		}
+		if err != nil {
+			log.Fatalf("failed to recv ping: %v", err)
+		}
+
+		log.Printf("recv pong: %s", r.GetContent())
+	}
+}
+
+func main() {
+	// parse cli arguments
+	flag.Parse()
+
+	// set up gRPC basics
+	conn, err := grpc.Dial(*addr, grpc.WithTransportCredentials(insecure.NewCredentials()))
+	if err != nil {
+		log.Fatalf("failed to connect: %v", err)
+	}
+	defer conn.Close()
+	ctx, cancel := context.WithTimeout(context.Background(), time.Minute)
+	defer cancel()
+	client := pb.NewBaseClient(conn)
+
+	// send actual messages!
+	ping(client, ctx)
+	foobar(client, ctx)
 }
