@@ -2,6 +2,12 @@ The single Protocol Buffer file that exists in this repository is already pre-co
 
 [gRPC's official quick-start documentation]: https://grpc.io/docs/languages/go/quickstart/#prerequisites
 
+## Rebuilding `.pb.go` files
+
+```bash
+find . -type f -name '*.proto' -exec protoc --go_out=. --go_opt=paths=source_relative --go-grpc_out=. --go-grpc_opt=paths=source_relative {} \;
+```
+
 ## Installing Go
 
 ```bash
@@ -32,10 +38,4 @@ source <(echo 'export PATH="$PATH:$HOME/.local/bin"' | tee -a ~/.profile)
 ```bash
 go install google.golang.org/protobuf/cmd/protoc-gen-go@v1.31
 go install google.golang.org/grpc/cmd/protoc-gen-go-grpc@v1.3
-```
-
-## Rebuilding `.pb.go` files
-
-```bash
-find . -type f -name '*.proto' -exec protoc --go_out=. --go_opt=paths=source_relative --go-grpc_out=. --go-grpc_opt=paths=source_relative {} \;
 ```

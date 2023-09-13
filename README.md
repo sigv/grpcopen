@@ -12,13 +12,33 @@ The `Foobar` endpoint is not implemented, and returns a gRPC status with code Un
 
 ## How-to
 
+### Starting the application
+
+```bash
+go run server/main.go -addr :8088
+```
+
+```bash
+go run client/main.go -addr localhost:8088 # direct
+go run client/main.go -addr localhost:8080 # HAProxy
+```
+
+### Installing Go
+
+```bash
+# https://go.dev/dl/
+
+wget -nv https://go.dev/dl/go1.21.1.linux-amd64.tar.gz
+rm -rf /usr/local/go && tar -C /usr/local -xzf go1.21.1.linux-amd64.tar.gz
+rm go1.21.1.linux-amd64.tar.gz
+
+source <(echo 'export PATH="$PATH:/usr/local/go/bin"' | tee -a /etc/profile)
+source <(echo 'export PATH="$PATH:$(go env GOPATH)/bin"' | tee -a /etc/profile)
+```
+
 ### Configuring HAProxy
 
-Building HAProxy is outside of the scope of this README. Consult [HAProxy's INSTALL documentation] for how to build it.
-
-[HAProxy's INSTALL documentation]: https://git.haproxy.org/?p=haproxy.git;a=blob;f=INSTALL;hb=HEAD
-
-A base configuration that can be used for testing:
+Building HAProxy is outside of the scope of this README. Consult [HAProxy's INSTALL documentation] for how to build it. A base configuration that can be used for testing:
 
 ```text
 global
@@ -41,26 +61,4 @@ backend be
    server srv 127.0.0.1:8088 proto h2
 ```
 
-### Installing Go
-
-```bash
-# https://go.dev/dl/
-
-wget -nv https://go.dev/dl/go1.21.1.linux-amd64.tar.gz
-rm -rf /usr/local/go && tar -C /usr/local -xzf go1.21.1.linux-amd64.tar.gz
-rm go1.21.1.linux-amd64.tar.gz
-
-source <(echo 'export PATH="$PATH:/usr/local/go/bin"' | tee -a /etc/profile)
-source <(echo 'export PATH="$PATH:$(go env GOPATH)/bin"' | tee -a /etc/profile)
-```
-
-### Starting the application
-
-```bash
-go run server/main.go -addr :8088
-```
-
-```bash
-go run client/main.go -addr localhost:8088 # direct
-go run client/main.go -addr localhost:8080 # HAProxy
-```
+[HAProxy's INSTALL documentation]: https://git.haproxy.org/?p=haproxy.git;a=blob;f=INSTALL;hb=HEAD
