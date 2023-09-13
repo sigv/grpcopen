@@ -1,0 +1,29 @@
+// Copyright (c) 2023 Valters Jansons
+
+syntax = "proto3";
+
+option go_package = "github.com/sigv/grpcopen";
+
+package grpopen;
+
+service Base {
+  rpc Foobar(stream FoobarRequest)
+      returns (stream FoobarResponse);
+
+  rpc Ping(stream PingRequest)
+      returns (stream PingResponse);
+}
+
+message FoobarRequest {
+}
+
+message FoobarResponse {
+}
+
+message PingRequest {
+  string content = 1;
+}
+
+message PingResponse {
+  string content = 2;
+}
